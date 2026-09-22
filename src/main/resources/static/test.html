@@ -1,0 +1,8 @@
+<script>
+fetch('http://localhost:8080/api/v1/accounts', {
+    headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJlZHNvbi5sLmNydXpAZ21haWwuY29tIiwiaWF0IjoxNzkwMDAxNDYzLCJleHAiOjE3OTAwODc4NjN9.xuQjwh7Pn5wtCad6_U4U3w3v87Hcak8sj6orWinCTUOsXigSFzs2lBH4RaIea7dn' }
+})
+.then(r => r.json())
+.then(console.log)
+.catch(err => console.error('Blocked:', err));
+</script>

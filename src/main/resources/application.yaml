@@ -1,0 +1,90 @@
+server:
+  servlet:
+    context-path: /api/v1
+
+spring:
+  application:
+    name: financial-control
+  datasource:
+    url: jdbc:postgresql://localhost:5432/financial_control
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update #Use Flyway later
+    show-sql: true
+  web:
+    locale-resolver: fixed
+    locale: en_US
+  mail:
+    host: ${MAIL_HOST:sandbox.smtp.mailtrap.io}
+    port: ${MAIL_PORT:2525}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+    consumer:
+      group-id: email-notifications
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+
+app:
+  email:
+    provider: ${EMAIL_PROVIDER:smtp} # smtp | resend | mailtrap
+
+resend:
+  api:
+    token: ${RESEND_API_TOKEN:}
+
+mailtrap:
+  api:
+    token: ${MAILTRAP_API_TOKEN:}
+    inbox-id: ${MAILTRAP_API_INBOXID:}
+
+security:
+  jwt:
+    secret: ${SECURITY_JWT_SECRET}
+    expiration: ${SECURITY_JWT_EXPIRATION}
+  password:
+    pepper: ${SECURITY_PASSWORD_PEPPER}
+  cors:
+    allowed-origins: http://localhost:8080,https://myfrontend.com
+    allowed-methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
+    allowed-headers: Authorization,Content-Type
+    allow-credentials: true
+    max-age: 3600
+
+logging:
+  level:
+    root: INFO
+    com.cruz.financialcontrol: INFO
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true                     # disable in prod if you don't want spec publicly exposed
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true                     # disable in prod (see below)
+    operations-sorter: method         # sort endpoints by HTTP method (alpha also common)
+    tags-sorter: alpha                # sort tag groups alphabetically
+    display-request-duration: true    # shows response time in UI — handy for debugging
+    try-it-out-enabled: true          # allow "Try it out" by default
+    doc-expansion: list               # collapse all sections by default (less noisy)
+    filter: true                      # adds a search/filter box for endpoints
+  show-actuator: false                # don't expose actuator endpoints in the spec
+  default-produces-media-type: application/json
+  packages-to-scan: com.cruz.financialcontrol.controller   # scope scanning, avoid picking up stray beans
