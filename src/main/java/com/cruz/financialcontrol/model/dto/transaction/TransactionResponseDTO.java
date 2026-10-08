@@ -1,5 +1,6 @@
 package com.cruz.financialcontrol.model.dto.transaction;
 
+import com.cruz.financialcontrol.model.dto.transactioncategory.TransactionCategoryResponseDTO;
 import com.cruz.financialcontrol.model.enums.TransactionStatus;
 import com.cruz.financialcontrol.model.enums.TransactionType;
 
@@ -13,5 +14,6 @@ public record TransactionResponseDTO(
         LocalDate date,
         TransactionType type,
         TransactionStatus status,
-        Long accountId
+        Long accountId,
+        TransactionCategoryResponseDTO categoryResponseDTO
 ){}

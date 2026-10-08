@@ -4,6 +4,7 @@ import com.cruz.financialcontrol.exception.BusinessRuleException;
 import com.cruz.financialcontrol.exception.NotFoundException;
 import com.cruz.financialcontrol.model.dto.transaction.CreateTransactionDTO;
 import com.cruz.financialcontrol.model.dto.transaction.UpdateTransactionDTO;
+import com.cruz.financialcontrol.model.dto.transactioncategory.TransactionCategoryResponseDTO;
 import com.cruz.financialcontrol.model.dto.transfer.CreateTransferDTO;
 import com.cruz.financialcontrol.model.dto.transfer.TransferResponseDTO;
 import com.cruz.financialcontrol.model.dto.transfer.UpdateTransferDTO;
@@ -30,6 +31,7 @@ public class TransferService {
 
     private final TransferRepository transferRepository;
     private final TransactionService transactionService;
+    private final TransactionCategoryService transactionCategoryService;
     private final TransferMapper transferMapper;
     private final SecurityUtils securityUtils;
 
@@ -50,13 +52,17 @@ public class TransferService {
             throw new BusinessRuleException("Origin and destination accounts must be different.");
         }
 
+        TransactionCategoryResponseDTO transferOut = transactionCategoryService.findByDescription("Transfer out");
+        TransactionCategoryResponseDTO transferIn = transactionCategoryService.findByDescription("Transfer in");
+
         Transaction originTransaction = transactionService.createEntity(new CreateTransactionDTO(
                 TRANSFER_TO_DESCRIPTION.formatted(createTransferDTO.destinationAccountId()),
                 createTransferDTO.amount(),
                 createTransferDTO.date(),
                 TransactionType.EXPENSE,
                 TransactionStatus.CONFIRMED,
-                createTransferDTO.originAccountId()
+                createTransferDTO.originAccountId(),
+                transferOut.id()
         ));
 
         Transaction destinationTransaction = transactionService.createEntity(new CreateTransactionDTO(
@@ -65,7 +71,8 @@ public class TransferService {
                 createTransferDTO.date(),
                 TransactionType.INCOME,
                 TransactionStatus.CONFIRMED,
-                createTransferDTO.destinationAccountId()
+                createTransferDTO.destinationAccountId(),
+                transferIn.id()
         ));
 
         Transfer transfer = new Transfer();
@@ -85,13 +92,17 @@ public class TransferService {
     public TransferResponseDTO update(Long id, UpdateTransferDTO updateTransferDTO) {
         Transfer transfer = findOwnedTransferOrThrow(id);
 
+        TransactionCategoryResponseDTO transferOut = transactionCategoryService.findByDescription("Transfer out");
+        TransactionCategoryResponseDTO transferIn = transactionCategoryService.findByDescription("Transfer in");
+
         transactionService.update(transfer.getOrigin().getId(), new UpdateTransactionDTO(
                         TRANSFER_TO_DESCRIPTION.formatted(updateTransferDTO.destinationAccountId()),
                         updateTransferDTO.originAccountId(),
                         updateTransferDTO.amount(),
                         updateTransferDTO.date(),
                         transfer.getOrigin().getType(),
-                        transfer.getOrigin().getStatus()
+                        transfer.getOrigin().getStatus(),
+                        transferOut.id()
                 )
         );
 
@@ -101,7 +112,8 @@ public class TransferService {
                         updateTransferDTO.amount(),
                         updateTransferDTO.date(),
                         transfer.getDestination().getType(),
-                        transfer.getDestination().getStatus()
+                        transfer.getDestination().getStatus(),
+                        transferIn.id()
                 )
         );
 

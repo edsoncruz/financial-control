@@ -40,6 +40,13 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       auto-offset-reset: earliest
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  cache:
+    redis:
+      time-to-live: 1m
 
 app:
   email:

@@ -7,6 +7,7 @@ import com.cruz.financialcontrol.model.dto.transaction.TransactionResponseDTO;
 import com.cruz.financialcontrol.model.dto.transaction.UpdateTransactionDTO;
 import com.cruz.financialcontrol.model.entity.Account;
 import com.cruz.financialcontrol.model.entity.Transaction;
+import com.cruz.financialcontrol.model.entity.TransactionCategory;
 import com.cruz.financialcontrol.model.enums.TransactionStatus;
 import com.cruz.financialcontrol.model.mapper.TransactionMapper;
 import com.cruz.financialcontrol.repository.TransactionRepository;
@@ -28,6 +29,7 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountService accountService;
     private final TransactionMapper transactionMapper;
+    private final TransactionCategoryService transactionCategoryService;
     private final SecurityUtils securityUtils;
 
     /**
@@ -41,9 +43,14 @@ public class TransactionService {
     @Transactional
     Transaction createEntity(CreateTransactionDTO createTransactionDTO) {
         Account account = accountService.findOwnedAccountOrThrow(createTransactionDTO.accountId());
+        TransactionCategory category = transactionCategoryService.findEntityById(createTransactionDTO.transactionCategoryId());
+
+        if (!category.getTransactionType().equals(createTransactionDTO.type()))
+            throw new BusinessRuleException("Transaction category type match the transaction category type");
 
         Transaction transaction = transactionMapper.toEntity(createTransactionDTO);
         transaction.setAccount(account);
+        transaction.setCategory(category);
         transaction = transactionRepository.saveAndFlush(transaction);
 
         updateBalance(transaction);
@@ -74,6 +81,10 @@ public class TransactionService {
     public TransactionResponseDTO update(Long id, UpdateTransactionDTO updateTransactionDTO) {
 
         Account account = accountService.findOwnedAccountOrThrow(updateTransactionDTO.accountId());
+        TransactionCategory category = transactionCategoryService.findEntityById(updateTransactionDTO.transactionCategoryId());
+
+        if (!category.getTransactionType().equals(updateTransactionDTO.type()))
+            throw new BusinessRuleException("Transaction category type match the transaction category type");
 
         Transaction transaction = findOwnedTransactionOrThrow(id);
 
@@ -94,6 +105,7 @@ public class TransactionService {
 
         transaction.setDescription(updateTransactionDTO.description());
         transaction.setDate(updateTransactionDTO.date());
+        transaction.setCategory(category);
 
         transaction = transactionRepository.save(transaction);
 

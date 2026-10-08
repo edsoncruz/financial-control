@@ -36,6 +36,10 @@ public class Transaction extends BaseEntity {
     @ManyToOne(fetch =  FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Account account;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private TransactionCategory category;
 }
 
 

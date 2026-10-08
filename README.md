@@ -75,8 +75,8 @@ This starts:
 Create/update the `.env` file (or export the variables in your shell) with values such as:
 
 ```
-DATABASE_USERNAME=postgres
-DATABASE_PASSWORD=postgres
+DATABASE_USERNAME=
+DATABASE_PASSWORD=  
 
 SECURITY_JWT_SECRET=<hex-encoded secret>
 SECURITY_JWT_EXPIRATION=86400

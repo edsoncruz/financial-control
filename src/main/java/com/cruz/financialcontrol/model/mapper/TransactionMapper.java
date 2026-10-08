@@ -16,6 +16,7 @@ public interface TransactionMapper {
     Transaction toEntity(CreateTransactionDTO dto);
 
     @Mapping(source = "account.id", target = "accountId")
+    @Mapping(source = "category", target = "categoryResponseDTO")
     TransactionResponseDTO toResponseDTO(Transaction entity);
 
     List<TransactionResponseDTO> toResponseDTO(List<Transaction> entities);

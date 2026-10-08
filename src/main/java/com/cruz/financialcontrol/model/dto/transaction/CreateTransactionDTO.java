@@ -1,5 +1,6 @@
 package com.cruz.financialcontrol.model.dto.transaction;
 
+import com.cruz.financialcontrol.model.entity.TransactionCategory;
 import com.cruz.financialcontrol.model.enums.TransactionStatus;
 import com.cruz.financialcontrol.model.enums.TransactionType;
 import jakarta.validation.constraints.NotNull;
@@ -28,5 +29,8 @@ public record CreateTransactionDTO(
         TransactionStatus status,
 
         @NotNull(message = "Account ID is required")
-        Long accountId
+        Long accountId,
+
+        @NotNull
+        Long transactionCategoryId
 ) {}

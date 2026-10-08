@@ -29,6 +29,9 @@ public record UpdateTransactionDTO(
         TransactionType type,
 
         @NotNull(message = "Transaction status is required")
-        TransactionStatus status
+        TransactionStatus status,
+
+        @NotNull
+        Long transactionCategoryId
 
 ) {}
